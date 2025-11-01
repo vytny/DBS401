@@ -49,18 +49,42 @@ cd database-security-ctf
 2. Cài đặt và khởi động Docker Desktop
 3. Đảm bảo Docker đang chạy (kiểm tra system tray)
 
-### Bước 3: Chạy Setup Script
-
+### Bước 3: Set Up
+Chạy file generate_flags
 **Trên Windows:**
 ```cmd
-setup.bat
+C:\Users\VyVa\Documents\FA25\DBS401\database-security-ctf\flag-generator> python3 generate_flags.py
 ```
 
-Script sẽ tự động:
-- Kiểm tra Docker và Python
 - Generate flags ngẫu nhiên cho instance của bạn
-- Tạo file `.env` với credentials
-- Build và start Docker containers
+- Sinh file `.env` với credentials
+
+Build và start Docker containers:
+(1) 
+```cmd
+docker compose build
+```
+Kết quả 
+```cmd
+[+] Building 3/3
+ ✔ ctf-platform    Built                                                                                           0.0s
+ ✔ mysql           Built                                                                                           0.0s
+ ✔ vulnerable-web  Built  
+```
+
+(2)
+```cmd
+docker compose up -d
+```
+Kết quả
+```cmd
+[+] Running 5/5
+ ✔ Network database-security-ctf_ctf-network  Created                                                              0.1s
+ ✔ Volume "database-security-ctf_mysql-data"  Created                                                              0.0s
+ ✔ Container ctf-mysql                        Healthy                                                             21.4s
+ ✔ Container ctf-vulnerable-web               Started                                                             21.6s
+ ✔ Container ctf-platform                     Started                                                             21.6s
+```
 
 ### Bước 4: Truy Cập Các Services
 
