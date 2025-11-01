@@ -1,0 +1,33 @@
+# Exported from Render on 2025-11-01T06:50:24Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: DBS401
+      runtime: docker
+      repo: https://github.com/vytny/DBS401
+      plan: free
+      envVars:
+      - key: WEB_SESSION_SECRET
+        sync: false
+      - key: CTF_ADMIN_PASSWORD
+        sync: false
+      - key: CTF_SECRET_KEY
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_DATABASE
+        sync: false
+      - key: MYSQL_ROOT_PASSWORD
+        sync: false
+      - key: INSTANCE_SALT
+        sync: false
+      region: singapore
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: commit
