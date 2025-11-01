@@ -12,7 +12,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_TCP_PORT: 3308
     ports:
-      - "3306:3306"
+      - "3306:3306" # port 3306 exposed externally for testing.
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
