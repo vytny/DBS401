@@ -50,7 +50,7 @@ cd database-security-ctf
 3. Đảm bảo Docker đang chạy (kiểm tra system tray)
 
 ### Bước 3: Set Up
-Chạy file generate_flags
+(1) Chạy file generate_flags
 **Trên Windows:**
 ```cmd
 C:\Users\VyVa\Documents\FA25\DBS401\database-security-ctf\flag-generator> python3 generate_flags.py
@@ -59,8 +59,8 @@ C:\Users\VyVa\Documents\FA25\DBS401\database-security-ctf\flag-generator> python
 - Generate flags ngẫu nhiên cho instance của bạn
 - Sinh file `.env` với credentials
 
-Build và start Docker containers:
-(1) 
+(2) Build và start Docker containers:
+
 ```cmd
 docker compose build
 ```
@@ -72,7 +72,6 @@ Kết quả
  ✔ vulnerable-web  Built  
 ```
 
-(2)
 ```cmd
 docker compose up -d
 ```
