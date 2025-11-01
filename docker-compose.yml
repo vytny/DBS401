@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # MySQL Database with intentional vulnerabilities
+  mysql:
+    build: ./mysql
+    container_name: ctf-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_TCP_PORT: 3308
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - ctf-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Vulnerable Web Application (Target for SQLi)
+  vulnerable-web:
+    build: ./vulnerable-web
+    container_name: ctf-vulnerable-web
+    environment:
+      DB_HOST: mysql
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      SESSION_SECRET: ${WEB_SESSION_SECRET}
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ctf-network
+
+  # CTF Platform (Challenge submission & scoring)
+  ctf-platform:
+    build: ./ctf-platform
+    container_name: ctf-platform
+    environment:
+      SECRET_KEY: ${CTF_SECRET_KEY}
+      ADMIN_PASSWORD: ${CTF_ADMIN_PASSWORD}
+      INSTANCE_SALT: ${INSTANCE_SALT}
+      DB_HOST: mysql
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./flags.json:/app/flags.json:ro
+    networks:
+      - ctf-network
+
+networks:
+  ctf-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

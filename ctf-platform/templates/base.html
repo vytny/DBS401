@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Database Security CTF{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}">🛡️ Database Security CTF</a>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('index') }}">Challenges</a>
+                <a href="{{ url_for('scoreboard') }}">Scoreboard</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <span class="nav-user">{{ session.username }}</span>
+                <span class="nav-score">Score: {{ session.score or 0 }}</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Database Security CTF Lab - Educational Purpose Only</p>
+            <p>Target: <code>http://localhost:8080</code> | MySQL: <code>localhost:3306</code></p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
