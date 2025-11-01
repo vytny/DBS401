@@ -1,33 +1,65 @@
-# Exported from Render on 2025-11-01T06:50:24Z
-version: "1"
-projects:
-- name: My project
-  environments:
-  - name: Production
-    services:
-    - type: web
-      name: DBS401
-      runtime: docker
-      repo: https://github.com/vytny/DBS401
-      plan: free
-      envVars:
-      - key: WEB_SESSION_SECRET
-        sync: false
-      - key: CTF_ADMIN_PASSWORD
-        sync: false
-      - key: CTF_SECRET_KEY
-        sync: false
-      - key: MYSQL_PASSWORD
-        sync: false
-      - key: MYSQL_USER
-        sync: false
-      - key: MYSQL_DATABASE
-        sync: false
-      - key: MYSQL_ROOT_PASSWORD
-        sync: false
+services:
+  - type: web
+    name: vulnerable-web
+    env: docker
+    repo: https://github.com/vytny/DBS401
+    plan: free
+    rootDir: vulnerable-web
+    dockerfilePath: vulnerable-web/Dockerfile
+    envVars:
+      - key: DB_HOST
+        value: ctf-mysql
+      - key: DB_USER
+        value: ${MYSQL_USER}
+      - key: DB_PASSWORD
+        value: ${MYSQL_PASSWORD}
+      - key: DB_NAME
+        value: ${MYSQL_DATABASE}
+      - key: SESSION_SECRET
+        value: ${WEB_SESSION_SECRET}
+    ports:
+      - 8080
+
+  - type: web
+    name: ctf-platform
+    env: docker
+    repo: https://github.com/vytny/DBS401
+    plan: free
+    rootDir: ctf-platform
+    dockerfilePath: ctf-platform/Dockerfile
+    envVars:
+      - key: SECRET_KEY
+        value: ${CTF_SECRET_KEY}
+      - key: ADMIN_PASSWORD
+        value: ${CTF_ADMIN_PASSWORD}
       - key: INSTANCE_SALT
-        sync: false
-      region: singapore
-      dockerContext: .
-      dockerfilePath: ./Dockerfile
-      autoDeployTrigger: commit
+        value: ${INSTANCE_SALT}
+      - key: DB_HOST
+        value: ctf-mysql
+      - key: DB_USER
+        value: ${MYSQL_USER}
+      - key: DB_PASSWORD
+        value: ${MYSQL_PASSWORD}
+      - key: DB_NAME
+        value: ${MYSQL_DATABASE}
+    ports:
+      - 5000
+
+  - type: private-service
+    name: ctf-mysql
+    env: docker
+    repo: https://github.com/vytny/DBS401
+    plan: free
+    rootDir: mysql
+    dockerfilePath: mysql/Dockerfile
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: ${MYSQL_ROOT_PASSWORD}
+      - key: MYSQL_DATABASE
+        value: ${MYSQL_DATABASE}
+      - key: MYSQL_USER
+        value: ${MYSQL_USER}
+      - key: MYSQL_PASSWORD
+        value: ${MYSQL_PASSWORD}
+    ports:
+      - 3308
