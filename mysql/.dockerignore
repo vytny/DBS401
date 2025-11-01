@@ -1,0 +1,13 @@
+**/var
+**/var/**
+**/data
+**/data/**
+**/lib
+**/lib/**
+*.ibd
+*.frm
+ibdata1
+ib_logfile*
+.vscode
+.git
+node_modules

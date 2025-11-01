@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{{ challenge.title }} - Database Security CTF{% endblock %}
+
+{% block content %}
+<div class="challenge-detail">
+    <div class="challenge-breadcrumb">
+        <a href="{{ url_for('index') }}">Challenges</a> /
+        <span>{{ challenge.title }}</span>
+    </div>
+
+    <div class="challenge-detail-header">
+        <h1>{{ challenge.title }}</h1>
+        <div class="challenge-meta">
+            {% if challenge.phase %}
+            <span class="badge badge-phase">{{ challenge.phase }}</span>
+            {% endif %}
+            <span class="badge badge-category">{{ challenge.category }}</span>
+            <span class="badge badge-difficulty badge-{{ challenge.difficulty|lower if challenge.difficulty else 'medium' }}">{{ challenge.difficulty if challenge.difficulty else 'Medium' }}</span>
+            <span class="badge badge-points">{{ challenge.points }} points</span>
+            {% if challenge.estimated_time %}
+            <span class="badge badge-time">⏱ {{ challenge.estimated_time }}</span>
+            {% endif %}
+            {% if is_solved %}
+            <span class="badge badge-success">✓ Solved</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="challenge-content">
+        <div class="challenge-description">
+            <h3>📋 Description</h3>
+            <p>{{ challenge.description }}</p>
+        </div>
+
+        {% if challenge.learning_objectives %}
+        <div class="learning-objectives">
+            <h3>🎯 Learning Objectives</h3>
+            <ul>
+                {% for objective in challenge.learning_objectives %}
+                <li>{{ objective }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if challenge.tools %}
+        <div class="challenge-tools">
+            <h3>🛠️ Recommended Tools</h3>
+            <div class="tools-list">
+                {% for tool in challenge.tools %}
+                <span class="badge badge-tool">{{ tool }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if challenge.ai_assistance %}
+        <div class="ai-assistance">
+            <h3>🤖 AI Integration Tip</h3>
+            <p class="ai-tip">{{ challenge.ai_assistance }}</p>
+        </div>
+        {% endif %}
+
+        <div class="challenge-hints">
+            <h3>💡 Hints</h3>
+            <div id="hints-container">
+                <button onclick="showHints({{ challenge.id }})" class="btn btn-secondary btn-sm" id="hints-btn">
+                    Show Hints
+                </button>
+                <div id="hints-list" style="display: none;">
+                    {% for hint in challenge.hints %}
+                    <div class="hint-item">
+                        <strong>Hint {{ loop.index }}:</strong> {{ hint }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% if not is_solved %}
+        <div class="flag-submission">
+            <h3>Submit Flag</h3>
+            <form id="flag-form">
+                <div class="form-group">
+                    <input type="text"
+                           id="flag-input"
+                           placeholder="FLAG{...}"
+                           class="flag-input"
+                           {% if is_solved %}disabled{% endif %}>
+                </div>
+                <button type="submit" class="btn btn-primary" {% if is_solved %}disabled{% endif %}>
+                    Submit Flag
+                </button>
+            </form>
+            <div id="flag-message"></div>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            <strong>✓ Challenge Solved!</strong>
+            <p>You've successfully completed this challenge and earned {{ challenge.points }} points!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="navigation-buttons">
+    {% if challenge.id > 1 %}
+    <a href="{{ url_for('challenge', challenge_id=challenge.id - 1) }}" class="btn btn-secondary">
+        ← Previous Challenge
+    </a>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        Back to Challenges
+    </a>
+
+    {% if challenge.id < 10 %}
+    <a href="{{ url_for('challenge', challenge_id=challenge.id + 1) }}" class="btn btn-secondary">
+        Next Challenge →
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const challengeId = {{ challenge.id }};
+const isSolved = {{ 'true' if is_solved else 'false' }};
+
+function showHints(challengeId) {
+    const hintsList = document.getElementById('hints-list');
+    const hintsBtn = document.getElementById('hints-btn');
+
+    if (hintsList.style.display === 'none') {
+        hintsList.style.display = 'block';
+        hintsBtn.textContent = 'Hide Hints';
+    } else {
+        hintsList.style.display = 'none';
+        hintsBtn.textContent = 'Show Hints';
+    }
+}
+
+if (!isSolved) {
+    document.getElementById('flag-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const flagInput = document.getElementById('flag-input');
+        const messageDiv = document.getElementById('flag-message');
+        const flag = flagInput.value.trim();
+
+        if (!flag) {
+            showMessage('Please enter a flag', 'error');
+            return;
+        }
+
+        // Submit flag
+        try {
+            const response = await fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    challenge_id: challengeId,
+                    flag: flag
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showMessage(data.message, 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showMessage(data.message, 'error');
+                flagInput.value = '';
+            }
+        } catch (error) {
+            showMessage('Error submitting flag', 'error');
+        }
+    });
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('flag-message');
+    messageDiv.className = `alert alert-${type}`;
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 5000);
+}
+</script>
+{% endblock %}

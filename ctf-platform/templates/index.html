@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Challenges - Database Security CTF{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🛡️ Database Security CTF</h1>
+    <p>Test your database penetration testing skills!</p>
+    <div class="hero-stats">
+        <div class="stat">
+            <span class="stat-number">{{ solved|length }}</span>
+            <span class="stat-label">Solved</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">{{ challenges|length }}</span>
+            <span class="stat-label">Total</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">{{ score }}</span>
+            <span class="stat-label">Points</span>
+        </div>
+    </div>
+</div>
+
+<div class="challenges-section">
+    <h2>Challenges</h2>
+
+    {% set categories = challenges | groupby('category') %}
+
+    {% for category, category_challenges in categories %}
+    <div class="category-section">
+        <h3 class="category-title">{{ category }}</h3>
+
+        <div class="challenges-grid">
+            {% for challenge in category_challenges %}
+            <div class="challenge-card {% if challenge.id in solved %}solved{% endif %}">
+                <div class="challenge-header">
+                    <h4>{{ challenge.title }}</h4>
+                    {% if challenge.id in solved %}
+                    <span class="badge badge-success">✓ Solved</span>
+                    {% endif %}
+                </div>
+
+                <p class="challenge-description">{{ challenge.description[:100] }}...</p>
+
+                <div class="challenge-footer">
+                    <span class="challenge-points">{{ challenge.points }} pts</span>
+                    <a href="{{ url_for('challenge', challenge_id=challenge.id) }}" class="btn btn-primary btn-sm">
+                        View Challenge
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="target-info">
+    <h3>🎯 Target Information</h3>
+    <div class="info-grid">
+        <div class="info-box">
+            <strong>Vulnerable Web App</strong>
+            <p><a href="http://localhost:8080" target="_blank">http://localhost:8080</a></p>
+            <p>PHP application with SQL injection vulnerabilities</p>
+        </div>
+        <div class="info-box">
+            <strong>MySQL Database</strong>
+            <p><code>mysql -h localhost -u ctf_user -p</code></p>
+            <p>Port: 3306 | Database: ctf_database</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

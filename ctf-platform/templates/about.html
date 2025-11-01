@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}About - Database Security CTF{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <h1>About This CTF</h1>
+
+    <div class="about-section">
+        <h2>🎯 Objective</h2>
+        <p>
+            This is a Database Security Capture The Flag (CTF) challenge designed for educational purposes.
+            The goal is to test and improve your database penetration testing skills through realistic scenarios.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h2>🛠️ Setup</h2>
+        <p>The environment consists of three main components:</p>
+        <ul>
+            <li><strong>CTF Platform:</strong> This website (port 5000) - Submit flags and track progress</li>
+            <li><strong>Vulnerable Web Application:</strong> Port 8080 - A PHP application with SQL injection vulnerabilities</li>
+            <li><strong>MySQL Database:</strong> Port 3306 - The target database with intentional security misconfigurations</li>
+        </ul>
+    </div>
+
+    <div class="about-section">
+        <h2>📋 Challenge Categories</h2>
+
+        <div class="category-info">
+            <h3>1. Reconnaissance</h3>
+            <p>Gather information about the target system, identify database types, versions, and services.</p>
+            <strong>Tools:</strong> nmap, netcat, curl
+        </div>
+
+        <div class="category-info">
+            <h3>2. Enumeration</h3>
+            <p>Discover databases, tables, users, and schema information.</p>
+            <strong>Tools:</strong> MySQL client, sqlmap, manual queries
+        </div>
+
+        <div class="category-info">
+            <h3>3. Exploitation</h3>
+            <p>Exploit SQL injection vulnerabilities to bypass authentication and extract data.</p>
+            <strong>Tools:</strong> Burp Suite, sqlmap, manual SQLi payloads
+        </div>
+
+        <div class="category-info">
+            <h3>4. Post-Exploitation</h3>
+            <p>Escalate privileges, find backdoors, and analyze logs.</p>
+            <strong>Tools:</strong> MySQL queries, log analysis tools
+        </div>
+    </div>
+
+    <div class="about-section">
+        <h2>🔧 Recommended Tools</h2>
+        <div class="tools-grid">
+            <div class="tool-item">
+                <strong>nmap</strong>
+                <p>Port scanning and service detection</p>
+            </div>
+            <div class="tool-item">
+                <strong>sqlmap</strong>
+                <p>Automated SQL injection tool</p>
+            </div>
+            <div class="tool-item">
+                <strong>Burp Suite</strong>
+                <p>Web application security testing</p>
+            </div>
+            <div class="tool-item">
+                <strong>MySQL Client</strong>
+                <p>Direct database connection</p>
+            </div>
+            <div class="tool-item">
+                <strong>AI Tools</strong>
+                <p>ChatGPT, Claude for payload generation</p>
+            </div>
+            <div class="tool-item">
+                <strong>Python</strong>
+                <p>Custom scripts and automation</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-section">
+        <h2>🤖 AI Integration</h2>
+        <p>This CTF encourages the use of AI tools for:</p>
+        <ul>
+            <li>Analyzing error messages and responses</li>
+            <li>Generating SQL injection payloads</li>
+            <li>Optimizing blind SQL injection scripts</li>
+            <li>Understanding security concepts</li>
+            <li>Automating repetitive tasks</li>
+        </ul>
+    </div>
+
+    <div class="about-section">
+        <h2>📚 Learning Resources</h2>
+        <ul>
+            <li><a href="https://portswigger.net/web-security/sql-injection" target="_blank">PortSwigger SQL Injection Guide</a></li>
+            <li><a href="https://owasp.org/www-community/attacks/SQL_Injection" target="_blank">OWASP SQL Injection</a></li>
+            <li><a href="https://github.com/sqlmapproject/sqlmap" target="_blank">sqlmap Documentation</a></li>
+            <li><a href="https://dev.mysql.com/doc/" target="_blank">MySQL Documentation</a></li>
+        </ul>
+    </div>
+
+    <div class="about-section warning-section">
+        <h2>⚠️ Important Warning</h2>
+        <p>
+            This environment is intentionally vulnerable and should <strong>ONLY</strong> be used for educational purposes
+            in a controlled environment. <strong>NEVER</strong> deploy this in a production environment or on a public network.
+        </p>
+        <p>
+            The techniques taught here should only be used for authorized security testing with explicit permission.
+            Unauthorized access to computer systems is illegal.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h2>🎓 For Students</h2>
+        <p>
+            This CTF was created as part of a Database Security course project. It demonstrates:
+        </p>
+        <ul>
+            <li>Common database vulnerabilities</li>
+            <li>Professional penetration testing methodology</li>
+            <li>Integration of AI tools in security testing</li>
+            <li>Proper documentation and reporting</li>
+        </ul>
+    </div>
+
+    <div class="target-connections">
+        <h2>🔗 Connection Information</h2>
+
+        <div class="connection-box">
+            <h3>Vulnerable Web Application</h3>
+            <code>http://localhost:8080</code>
+            <p>Browse the application, try logging in, search for products</p>
+        </div>
+
+        <div class="connection-box">
+            <h3>MySQL Database</h3>
+            <code>mysql -h localhost -P 3306 -u ctf_user -p</code>
+            <p>Password: Check your .env file</p>
+        </div>
+
+        <div class="connection-box">
+            <h3>Direct SQLi Testing</h3>
+            <code>sqlmap -u "http://localhost:8080/index.php?page=login" --data="username=admin&password=test" --dbs</code>
+        </div>
+    </div>
+</div>
+{% endblock %}

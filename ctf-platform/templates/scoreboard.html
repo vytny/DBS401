@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Scoreboard - Database Security CTF{% endblock %}
+
+{% block content %}
+<div class="scoreboard-container">
+    <h1>📊 Your Progress</h1>
+
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ score }}</span>
+                <span class="stat-label">Total Points</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ solved_count }}/{{ total_challenges }}</span>
+                <span class="stat-label">Challenges Solved</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ "%.1f"|format(progress) }}%</span>
+                <span class="stat-label">Progress</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_points }}</span>
+                <span class="stat-label">Max Points</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ progress }}%"></div>
+        </div>
+        <p class="progress-text">{{ solved_count }} of {{ total_challenges }} challenges completed</p>
+    </div>
+
+    <div class="challenges-status">
+        <h2>Challenge Status</h2>
+
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>Challenge</th>
+                    <th>Category</th>
+                    <th>Points</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for challenge in challenges %}
+                <tr class="{% if challenge.id in solved %}solved-row{% endif %}">
+                    <td>
+                        <a href="{{ url_for('challenge', challenge_id=challenge.id) }}">
+                            {{ challenge.title }}
+                        </a>
+                    </td>
+                    <td>{{ challenge.category }}</td>
+                    <td>{{ challenge.points }}</td>
+                    <td>
+                        {% if challenge.id in solved %}
+                        <span class="badge badge-success">✓ Solved</span>
+                        {% else %}
+                        <span class="badge badge-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="category-breakdown">
+        <h2>Category Breakdown</h2>
+
+        {% set categories = challenges | groupby('category') %}
+
+        <div class="category-grid">
+            {% for category, category_challenges in categories %}
+            <div class="category-card">
+                <h3>{{ category }}</h3>
+                {% set category_solved = category_challenges | selectattr('id', 'in', solved) | list | length %}
+                {% set category_total = category_challenges | list | length %}
+
+                <div class="category-progress">
+                    <span class="category-stats">{{ category_solved }} / {{ category_total }}</span>
+                    <div class="mini-progress-bar">
+                        <div class="mini-progress-fill" style="width: {{ (category_solved / category_total * 100) if category_total > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="actions">
+        <form method="POST" action="{{ url_for('reset') }}" onsubmit="return confirm('Are you sure you want to reset your progress?');">
+            <button type="submit" class="btn btn-danger">Reset Progress</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
